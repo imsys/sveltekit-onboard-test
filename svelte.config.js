@@ -11,7 +11,16 @@ const config = {
 		adapter: adapter(),
 
 		// hydrate the <div id="svelte"> element in src/app.html
-		target: '#svelte'
+		target: '#svelte',
+
+		vite: {
+			resolve:{
+				alias:{
+					// ↓ see https://github.com/vitejs/vite/issues/6085
+					"@ensdomains/address-encoder": "@ensdomains/address-encoder/lib/index.umd.js",
+				},
+			},
+		}
 	}
 };
 
