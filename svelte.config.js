@@ -1,5 +1,10 @@
 import adapter from '@sveltejs/adapter-static';
 import preprocess from 'svelte-preprocess';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
+
+const MODE = process.env.NODE_ENV
+// const production = MODE === 'production';
+const development = MODE === 'development';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -14,6 +19,25 @@ const config = {
 		target: '#svelte',
 
 		vite: {
+			plugins: [
+				// ↓ Have to check the mode here because this cant run on build
+				development && nodePolyfills({
+					include: ['node_modules/**/*.js', new RegExp('node_modules/.vite/.*js')]
+				}),
+
+			],
+			build: {
+				rollupOptions: {
+					plugins: [
+						// ↓ Needed for WalletConnect build
+						nodePolyfills()
+					]
+				  },
+				// ↓ Needed for WalletConnect build
+				commonjsOptions: {
+					transformMixedEsModules: true
+				}
+			},
 			resolve:{
 				alias:{
 					// ↓ see https://github.com/vitejs/vite/issues/6085
